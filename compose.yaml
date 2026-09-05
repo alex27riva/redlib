@@ -1,6 +1,9 @@
 services:
   redlib:
-    image: quay.io/redlib/redlib:latest
+    # Built from this fork's source by .github/workflows/ghcr.yml.
+    # Do not point this at quay.io/redlib/redlib:latest - that image tracks the
+    # latest upstream *release*, which still ships the pre-wreq client Reddit blocks.
+    image: ghcr.io/alex27riva/redlib:latest
     restart: always
     container_name: "redlib"
     ports:

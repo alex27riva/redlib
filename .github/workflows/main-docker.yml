@@ -11,6 +11,9 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Upstream release plumbing: only meaningful on redlib-org/redlib.
+    # Forks skip this; see .github/workflows/ghcr.yml for this fork's image build.
+    if: github.repository == 'redlib-org/redlib'
     strategy:
       fail-fast: false
       matrix:
@@ -63,6 +66,9 @@ jobs:
           retention-days: 1
   merge:
     runs-on: ubuntu-latest
+    # Upstream release plumbing: only meaningful on redlib-org/redlib.
+    # Forks skip this; see .github/workflows/ghcr.yml for this fork's image build.
+    if: github.repository == 'redlib-org/redlib'
     needs:
       - build
     steps:

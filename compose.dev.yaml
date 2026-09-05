@@ -3,7 +3,9 @@ version: "3.8"
 
 services:
   redlib:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.alpine
     restart: always
     container_name: "redlib"
     ports:

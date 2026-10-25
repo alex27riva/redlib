@@ -168,8 +168,8 @@ pub async fn community(req: Request<Body>) -> Result<Response<Body>, String> {
 				let no_posts = posts.is_empty();
 				let all_posts_hidden_nsfw = !no_posts && (posts.iter().all(|p| p.flags.nsfw) && setting(&req, "show_nsfw") != "on");
 				if sort == "new" {
-					posts.sort_by_key(|a| std::cmp::Reverse(a.created_ts));
-					posts.sort_by_key(|a| std::cmp::Reverse(a.flags.stickied));
+					posts.sort_by_key(|post| std::cmp::Reverse(post.created_ts));
+					posts.sort_by_key(|post| std::cmp::Reverse(post.flags.stickied));
 				}
 				Ok(template(&SubredditTemplate {
 					sub,
@@ -598,8 +598,11 @@ pub async fn rss(req: Request<Body>) -> Result<Response<Body>, String> {
 
 	// Get subreddit
 	let sub = req.param("sub").unwrap_or_default();
-	let post_sort = req.cookie("post_sort").map_or_else(|| "hot".to_string(), |c| c.value().to_string());
-	let sort = req.param("sort").unwrap_or_else(|| req.param("id").unwrap_or(post_sort));
+	let query = format!("?{}", req.uri().query().unwrap_or_default());
+	let sort = match param(&query, "sort").as_deref() {
+		Some(s @ ("hot" | "new" | "top" | "rising" | "controversial")) => s.to_string(),
+		_ => "hot".to_string(),
+	};
 
 	// Get path
 	let path = format!("/r/{sub}/{sort}.json?{}", req.uri().query().unwrap_or_default());
